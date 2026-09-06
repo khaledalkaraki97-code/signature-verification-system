@@ -1,4 +1,3 @@
-import io
 import cv2
 import numpy as np
 import streamlit as st
@@ -37,27 +36,31 @@ col_up1, col_up2 = st.columns(2)
 with col_up1:
     orig_file = st.file_uploader(
         "رفع التوقيع الأصلي المرجعي (Reference Signature)",
-        type=["jpg", "jpeg", "png"],
+        type=["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"],
+        key="orig_file_input",
     )
 with col_up2:
     susp_file = st.file_uploader(
         "رفع التوقيع المشتبه به (Questioned Signature)",
-        type=["jpg", "jpeg", "png"],
+        type=["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"],
+        key="susp_file_input",
     )
 
 if orig_file and susp_file:
     img_orig_raw = Image.open(orig_file).convert("RGB")
     img_susp_raw = Image.open(susp_file).convert("RGB")
 
-    with st.expander("👁️ عرض العينات الحالية قبل المقارنة", expanded=False):
+    with st.expander("👁️ عرض العينات الحالية قبل المقارنة", expanded=True):
         c1, c2 = st.columns(2)
         c1.image(
-            img_orig_raw, caption="التوقيع الأصلي (Reference)", use_column_width=True
+            img_orig_raw,
+            caption="التوقيع الأصلي (Reference)",
+            use_container_width=True,
         )
         c2.image(
             img_susp_raw,
             caption="التوقيع المشتبه به (Questioned)",
-            use_column_width=True,
+            use_container_width=True,
         )
 
 
@@ -157,7 +160,11 @@ if st.button("🚀 GENERATE / إجراء التحليل الشامل") and orig_
         m2.metric("نسبة الاختلاف (Diff)", f"{difference_pct}%")
         m3.metric("نسبة كثافة الحبر (Stroke Ratio)", f"{density_ratio}%")
 
-        status = "توقيع مطابق / موثوق" if similarity_pct >= 75 else "توقيع مشتبه به / مزور"
+        status = (
+            "توقيع مطابق / موثوق"
+            if similarity_pct >= 75
+            else "توقيع مشتبه به / مزور"
+        )
         m4.metric(
             "التقييم التلقائي",
             status,
@@ -183,7 +190,7 @@ if st.button("🚀 GENERATE / إجراء التحليل الشامل") and orig_
                 st.image(
                     annotated_result,
                     caption="تراكب التوقيعين وتحديد مواضع الاختلاف",
-                    use_column_width=True,
+                    use_container_width=True,
                 )
             with col_res2:
                 # توليد خريطة الحرارة للإحداثيات
@@ -193,13 +200,13 @@ if st.button("🚀 GENERATE / إجراء التحليل الشامل") and orig_
                 st.image(
                     diff_heatmap,
                     caption="خريطة الكثافة الحرارية للاختلافات (Heatmap)",
-                    use_column_width=True,
+                    use_container_width=True,
                 )
         else:
             st.image(
                 annotated_result,
                 caption="تراكب التوقيعين وتحديد مواضع الاختلاف",
-                use_column_width=True,
+                use_container_width=True,
             )
 
         # --- 5. خيارات التصدير ---
